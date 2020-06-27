@@ -171,9 +171,6 @@ main() {
       tmux send-keys -t "$ACTIVE_PANE" "$selected_item_password"
     fi
   fi
-echo "Selected item name: $selected_item_name, selected item uuid: $selected_item_uuid"
-echo "Selected with grep: $(echo "$items" | grep "$selected_item_name")"
-echo "Password: $selected_item_password"
 }
 
 main "$@"
