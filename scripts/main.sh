@@ -151,9 +151,9 @@ main() {
   selected_item_name="$(echo "$items" | awk -F ',' '{ print $1, "(" $3 ")" }' | fzf --no-multi)"
 
   if [[ -n "$selected_item_name" ]]; then
-	selected_item_name="$(echo $selected_item_name | awk -F '(' '{ print $1 }'| sed -e 's/[ \t]*$//')"
-	selected_item_user="$(echo $selected_item_name | awk -F '(' '{ print $2 }'| tr -d ')')"
-    selected_item_uuid="$(echo "$items" | grep "$selected_item_name" | grep "$selected_item_user" | awk -F ',' '{ print $2 }')"
+	selected_item_realname="$(echo "$selected_item_name" | awk -F '(' '{ print $1 }'| sed -e 's/[ \t]*$//')"
+	selected_item_user="$(echo "$selected_item_name" | awk -F '(' '{ print $2 }'| tr -d ')')"
+    selected_item_uuid="$(echo "$items" | grep "$selected_item_realname" | grep "$selected_item_user" | awk -F ',' '{ print $2 }')"
 
     spinner_start "Fetching password"
     selected_item_password="$(get_op_item_password "$selected_item_uuid")"
