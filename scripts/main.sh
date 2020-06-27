@@ -55,6 +55,7 @@ get_op_items() {
   #         { "u": "sudolikeaboss://local" }
   #       ],
   #       "title": "Some item",
+  #       "ainfo": "yourusername",
   #       "tags": ["some_tag"]
   #     }
   #   }
@@ -68,7 +69,7 @@ get_op_items() {
     JQ_FILTER="
       .[]
       | [select(.overview.URLs | map(select(.u)) | length == 1)?]
-      | map([ .overview.title, .uuid ]
+      | map([ .overview.title, .uuid, .overview.ainfo ]
       | join(\",\"))
       | .[]
     "
@@ -147,9 +148,10 @@ main() {
     spinner_stop
   fi
 
-  selected_item_name="$(echo "$items" | awk -F ',' '{ print $1 }' | fzf --no-multi)"
+  selected_item_name="$(echo "$items" | awk -F ',' '{ print $1, "(" $3 ")" }' | fzf --no-multi)"
 
   if [[ -n "$selected_item_name" ]]; then
+	selected_item_name="$(echo $selected_item_name | awk -F ' ' '{ print $1 }')"
     selected_item_uuid="$(echo "$items" | grep "$selected_item_name" | awk -F ',' '{ print $2 }')"
 
     spinner_start "Fetching password"
@@ -169,6 +171,9 @@ main() {
       tmux send-keys -t "$ACTIVE_PANE" "$selected_item_password"
     fi
   fi
+echo "Selected item name: $selected_item_name, selected item uuid: $selected_item_uuid"
+echo "Selected with grep: $(echo "$items" | grep "$selected_item_name")"
+echo "Password: $selected_item_password"
 }
 
 main "$@"
